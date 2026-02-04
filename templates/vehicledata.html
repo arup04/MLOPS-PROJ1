@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Insurance Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="visual-side">
+            <div class="content-overlay">
+                <h1>Insurance Intelligence</h1>
+                <p>Explore customer interest trends using our AI-driven vehicle data classifier.</p>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-car"></i>
+                        <span>Vehicle Focus</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Data-Driven</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Smart Analysis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="form-wrapper">
+                
+                {% if context == 'Response-Yes' %}
+                <div class="alert success">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h4>Likely Interested</h4>
+                        <p>The model predicts this customer may be interested in vehicle insurance.</p>
+                    </div>
+                </div>
+                {% elif context == 'Response-No' %}
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <h4>Likely Not Interested</h4>
+                        <p>The model predicts this customer is likely NOT interested in insurance.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <h2>Enter Vehicle Details</h2>
+                <p class="subtitle">Please fill in the details below to generate a prediction.</p>
+
+                <form action="/" method="post" id="predictionForm">
+                    
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label><i class="fas fa-venus-mars"></i> Gender</label>
+                            <select name="Gender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-user"></i> Age</label>
+                            <input type="number" name="Age" placeholder="e.g. 25" min="18" max="100" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-id-card"></i> Driving License</label>
+                            <select name="Driving_License" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Region Code</label>
+                            <input type="number" name="Region_Code" placeholder="e.g. 28" step="0.1" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-history"></i> Previously Insured?</label>
+                            <select name="Previously_Insured" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-money-bill-wave"></i> Annual Premium</label>
+                            <input type="number" name="Annual_Premium" placeholder="e.g. 30000" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-network-wired"></i> Sales Channel</label>
+                            <input type="number" name="Policy_Sales_Channel" placeholder="e.g. 26" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-calendar-check"></i> Vintage (Days)</label>
+                            <input type="number" name="Vintage" placeholder="e.g. 150" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-car-crash"></i> Past Damage?</label>
+                            <select name="Vehicle_Damage_Yes" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fas fa-car"></i> Vehicle Age</label>
+                            <select id="vehicle_age_selector" required onchange="handleVehicleAge()">
+                                <option value="" disabled selected>Select Age</option>
+                                <option value="new">&lt; 1 Year</option>
+                                <option value="mid">1-2 Years</option>
+                                <option value="old">&gt; 2 Years</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="Vehicle_Age_lt_1_Year" id="v_lt_1">
+                    <input type="hidden" name="Vehicle_Age_gt_2_Years" id="v_gt_2">
+
+                    <button type="submit" class="submit-btn">
+                        Predict Interest <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logic to map the friendly dropdown to the specific backend One-Hot Encoded fields
+        function handleVehicleAge() {
+            const selector = document.getElementById('vehicle_age_selector').value;
+            const inputLt1 = document.getElementById('v_lt_1');
+            const inputGt2 = document.getElementById('v_gt_2');
+
+            // Reset first
+            inputLt1.value = 0;
+            inputGt2.value = 0;
+
+            if (selector === 'new') {
+                inputLt1.value = 1;
+            } else if (selector === 'old') {
+                inputGt2.value = 1;
+            } 
+            // if 'mid' (1-2 years), both remain 0, which is correct for OHE.
+        }
+    </script>
+
+</body>
+</html>
